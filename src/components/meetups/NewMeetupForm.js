@@ -1,15 +1,17 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 
-import Card from '../ui/Card';
-import classes from './NewMeetupForm.module.css';
+import Card from "../ui/Card";
+import classes from "./NewMeetupForm.module.css";
+import { useRouter } from "next/router";
 
-function NewMeetupForm(props) {
+function NewMeetupForm({ onAddMeetup }) {
   const titleInputRef = useRef();
   const imageInputRef = useRef();
   const addressInputRef = useRef();
   const descriptionInputRef = useRef();
+  const router = useRouter();
 
-  function submitHandler(event) {
+  async function submitHandler(event) {
     event.preventDefault();
 
     const enteredTitle = titleInputRef.current.value;
@@ -23,31 +25,37 @@ function NewMeetupForm(props) {
       address: enteredAddress,
       description: enteredDescription,
     };
-
-    props.onAddMeetup(meetupData);
+  
+    const {message, error, meetupId = ''} = await onAddMeetup(meetupData);
+    if(error){
+      alert(message);
+    }else{
+      alert(message);
+      router.push(`/home/${meetupId}`);
+    }
   }
 
   return (
     <Card>
       <form className={classes.form} onSubmit={submitHandler}>
         <div className={classes.control}>
-          <label htmlFor='title'>Meetup Title</label>
-          <input type='text' required id='title' ref={titleInputRef} />
+          <label htmlFor="title">Meetup Title</label>
+          <input type="text" required id="title" ref={titleInputRef} />
         </div>
         <div className={classes.control}>
-          <label htmlFor='image'>Meetup Image</label>
-          <input type='url' required id='image' ref={imageInputRef} />
+          <label htmlFor="image">Meetup Image</label>
+          <input type="url" required id="image" ref={imageInputRef} />
         </div>
         <div className={classes.control}>
-          <label htmlFor='address'>Address</label>
-          <input type='text' required id='address' ref={addressInputRef} />
+          <label htmlFor="address">Address</label>
+          <input type="text" required id="address" ref={addressInputRef} />
         </div>
         <div className={classes.control}>
-          <label htmlFor='description'>Description</label>
+          <label htmlFor="description">Description</label>
           <textarea
-            id='description'
+            id="description"
             required
-            rows='5'
+            rows="5"
             ref={descriptionInputRef}
           ></textarea>
         </div>
